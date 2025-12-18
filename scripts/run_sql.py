@@ -1,16 +1,27 @@
-import duckdb
+import sys
 from pathlib import Path
+import duckdb
 
 DB_PATH = Path("db/aml.duckdb")
-SQL_PATH = Path("sql/01_create_core_tables.sql")
 
-con = duckdb.connect(DB_PATH)
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python scripts/run_sql.py <path-to-sql-file>")
+        sys.exit(1)
 
-with open(SQL_PATH, "r") as f:
-    sql = f.read()
+    sql_path = Path(sys.argv[1])
+    if not sql_path.exists():
+        print(f"SQL file not found: {sql_path}")
+        sys.exit(1)
 
-con.execute(sql)
+    con = duckdb.connect(DB_PATH)
 
-print("SQL executed successfully.")
-print("Current tables:")
-print(con.execute("SHOW TABLES").fetchall())
+    sql = sql_path.read_text(encoding="utf-8")
+    con.execute(sql)
+
+    print("SQL executed successfully.")
+    print("Tables now:")
+    print(con.execute("SHOW TABLES").fetchall())
+
+if __name__ == "__main__":
+    main()
