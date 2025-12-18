@@ -3,3 +3,7 @@ __pycache__/
 *.pyc
 data/raw/
 .DS_Store
+
+db/
+data/raw/
+data/processed/
